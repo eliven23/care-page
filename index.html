@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Care Page 💙</title>
+        <style>
+            body {
+                font-family: 'Segoe UI', Arial, sans-serif;
+                background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+                color: #e2e8f0;
+                text-align: center;
+                padding: 40px;
+                min-height: 100vh;
+            }
+            h1 { 
+                font-size: 28px; 
+                margin-bottom: 30px;
+                background: linear-gradient(45deg, #60a5fa, #a78bfa);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+            }
+            .btn {
+                display: block;
+                margin: 12px auto;
+                width: 260px;
+                border: none;
+                border-radius: 15px;
+                background: linear-gradient(45deg, #1e293b, #334155);
+                color: white;
+                cursor: pointer;
+                padding: 15px;
+                font-size: 16px;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            }
+            .btn:hover { 
+                transform: translateY(-2px);
+                box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+                background: linear-gradient(45deg, #334155, #475569);
+            }
+            .btn.active {
+                background: linear-gradient(45deg, #10b981, #059669);
+                animation: pulse 2s infinite;
+            }
+            .btn-spotify {
+                background: linear-gradient(45deg, #1db954, #1ed760) !important;
+                width: 300px;
+            }
+            .btn-spotify:hover {
+                background: linear-gradient(45deg, #1ed760, #1db954) !important;
+            }
+            .btn-call {
+                background: linear-gradient(45deg, #ef4444, #f87171) !important;
+                width: 280px;
+                font-size: 18px;
+            }
+            .btn-call:hover {
+                background: linear-gradient(45deg, #f87171, #ef4444) !important;
+            }
+            .phone-number {
+                font-size: 24px;
+                font-weight: bold;
+                background: linear-gradient(45deg, #ef4444, #f87171);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+                background-clip: text;
+                margin: 20px 0;
+                letter-spacing: 2px;
+            }
+            @keyframes pulse {
+                0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+                70% { box-shadow: 0 0 0 20px rgba(16,185,129,0); }
+                100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+            }
+            #output {
+                margin-top: 40px;
+                font-size: 18px;
+                min-height: 120px;
+                padding: 25px;
+                background: rgba(30,41,59,0.8);
+                border-radius: 20px;
+                margin-left: auto;
+                margin-right: auto;
+                max-width: 600px;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255,255,255,0.1);
+                line-height: 1.6;
+            }
+            #inputBox, #spotifyInput {
+                width: 80%;
+                max-width: 400px;
+                padding: 12px;
+                margin: 15px auto;
+                border: none;
+                border-radius: 10px;
+                background: #1e293b;
+                color: #e2e8f0;
+                font-size: 16px;
+                display: none;
+            }
+            #inputBox:focus, #spotifyInput:focus {
+                outline: none;
+                box-shadow: 0 0 0 3px rgba(96,165,250,0.5);
+            }
+            #sendBtn, #spotifyBtn {
+                display: none;
+                margin: 10px auto;
+                padding: 10px 20px;
+                background: #3b82f6;
+                border-radius: 10px;
+            }
+            #sendBtn:hover, #spotifyBtn:hover { background: #2563eb; }
+            .progress-bar {
+                width: 300px;
+                height: 8px;
+                background: #334155;
+                border-radius: 4px;
+                margin: 20px auto;
+                overflow: hidden;
+            }
+            .progress-fill {
+                height: 100%;
+                background: linear-gradient(90deg, #10b981, #34d399);
+                width: 0%;
+                transition: width 1s ease;
+            }
+            .timer-display {
+                font-size: 24px;
+                font-weight: bold;
+                color: #10b981;
+                margin: 10px 0;
+            }
+            .spotify-section {
+                background: linear-gradient(45deg, rgba(29,185,84,0.2), rgba(30,215,96,0.2));
+                border: 2px dashed #1db954;
+                border-radius: 15px;
+                padding: 20px;
+                margin: 20px auto;
+                max-width: 500px;
+            }
+            .call-section {
+                background: linear-gradient(45deg, rgba(239,68,68,0.2), rgba(248,113,113,0.2));
+                border: 2px solid #ef4444;
+                border-radius: 15px;
+                padding: 25px;
+                margin: 20px auto;
+                max-width: 400px;
+                box-shadow: 0 10px 30px rgba(239,68,68,0.3);
+            }
+            .btn-study-start {
+                background: linear-gradient(45deg, #f59e0b, #fbbf24) !important;
+                width: 220px;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            .btn-study-start:hover {
+                background: linear-gradient(45deg, #fbbf24, #f59e0b) !important;
+                transform: translateY(-3px);
+            }
+            .btn-study-pause {
+                background: linear-gradient(45deg, #f97316, #fb923c) !important;
+                width: 180px;
+            }
+            .timer-paused {
+                color: #f59e0b !important;
+                text-shadow: 0 0 10px rgba(245,158,11,0.5);
+            }
+            .timer-display {
+                font-size: 28px;
+                font-weight: bold;
+                color: #10b981;
+                margin: 15px 0;
+                text-shadow: 0 0 10px rgba(16,185,129,0.5);
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>Hey. No pressure. Just pick what you need. 💙</h1>
+
+        <button class="btn" onclick="show('stress')">🫠 I'm overwhelmed</button>
+        <button class="btn" onclick="show('motivate')">🔥 Push me</button>
+        <button class="btn" onclick="show('funny')">😂 Distract me</button>
+        <button class="btn" onclick="study()">📚 Study with me</button>
+        <button class="btn" onclick="talk()">💬 Talk to me</button>
+        
+        <button class="btn btn-spotify" onclick="openSpotifyDirect()">
+            🎵 Open Focus Playlist
+        </button>
+        
+        <button class="btn btn-call" onclick="showPhoneNumber()">
+            📞 Call me anytime
+        </button>
+
+        <div id="output"></div>
+        
+        <input type="text" id="inputBox" placeholder="Type your thoughts here..." onkeypress="handleKeypress(event)">
+        <input type="url" id="spotifyInput" placeholder="Paste your Spotify playlist link here..." onkeypress="handleSpotifyKeypress(event)">
+        
+        <button id="sendBtn" class="btn" onclick="sendMessage()">Send 💭</button>
+        <button id="spotifyBtn" class="btn btn-spotify" onclick="openSpotify()">Open Spotify 🎧</button>
+
+        <script>
+            const messages = {
+                stress: [
+                    "You don't have to do everything today. What's ONE thing we can tackle?",
+                    "Pick one thing. That's enough. What feels most urgent?",
+                    "Pause. Breathe. Continue later. Ready to breathe with me? (type 'yes')",
+                    "You're allowed to feel overwhelmed. Want to break it down together?",
+                    "You're carrying a lot right now—it makes sense you feel this way.",
+                    "You're doing better than you think.",
+                    "I know this is hard, but you're not losing.",
+                    "Future nurse things. You got this.",
+                    "Imagine looking back at this when you're licensed.",
+                    "Still proud of you.",
+                ],
+                motivate: [
+                    "You made it this far already! What's your next small win?",
+                    "Do 10 minutes. Then decide again. Ready to start? (type 'start')",
+                    "You've handled worse days than this. What's working well today?",
+                    "Progress > perfection. Celebrate your last win!",
+                    "You're closer than you think."
+                ],
+                funny: [
+                    "If stress burned calories, you'd be a supermodel. What's stressing you? 😂",
+                    "Nursing school = final boss level. What's your power-up? ⚡",
+                    "You vs stress: still undefeated! High five? ✋",
+                    "This is just a side quest. What's the main quest today?"
+                ]
+            };
+
+            // 👇 CHANGE THESE TO YOUR INFO
+            const YOUR_PHONE_NUMBER = "+639668917845";  // Replace with your number
+            const YOUR_SPOTIFY_PLAYLIST = "https://open.spotify.com/playlist/2SGgfkVoROgMsqMG24E6pp";  // Your playlist
+
+            let minutes = 25;
+            let timerInterval = null;
+            let conversationActive = false;
+            let currentMode = '';
+            let spotifyLink = '';
+            let studyTimerRunning = false;
+            let studyPaused = false;
+
+            function random(arr) {
+                return arr[Math.floor(Math.random() * arr.length)];
+            }
+
+            // 🎵 DIRECT SPOTIFY REDIRECT (no input needed)
+            function openSpotifyDirect() {
+                window.open(YOUR_SPOTIFY_PLAYLIST, '_blank');
+            }
+
+            function showSpotify() {
+                const output = document.getElementById("output");
+                output.innerHTML = `
+                    <div class="spotify-section">
+                        <strong>🎵 Music helps everything</strong><br><br>
+                        Paste your favorite Spotify playlist below!<br>
+                        (focus beats, lo-fi, classical, whatever works)<br><br>
+                        <em>Or use my focus playlist above! 🎧</em>
+                    </div>
+                `;
+                
+                document.getElementById('spotifyInput').style.display = 'block';
+                document.getElementById('spotifyBtn').style.display = 'block';
+                document.getElementById('spotifyInput').focus();
+            }
+
+            function openSpotify() {
+                const input = document.getElementById('spotifyInput');
+                spotifyLink = input.value.trim();
+                if (spotifyLink) {
+                    window.open(spotifyLink, '_blank');
+                } else {
+                    window.open(YOUR_SPOTIFY_PLAYLIST, '_blank');
+                }
+            }
+
+            // 📞 CALL ME BUTTON
+            function showPhoneNumber() {
+                const output = document.getElementById("output");
+                output.innerHTML = `
+                    <div class="call-section">
+                        <strong>📞 I'm here when you need me</strong><br><br>
+                        Call or text anytime:<br>
+                        <div class="phone-number">${YOUR_PHONE_NUMBER}</div>
+                        <br>
+                        No need to explain. Just reach out. ❤️
+                    </div>
+                    <br>
+                    <button class="btn" onclick="copyPhoneNumber()">📋 Copy Number</button>
+                    <button class="btn" onclick="dialPhone()">📱 Call Now</button>
+                `;
+                hideInput();
+                hideSpotifyInput();
+            }
+
+            function copyPhoneNumber() {
+                navigator.clipboard.writeText(YOUR_PHONE_NUMBER).then(() => {
+                    const output = document.getElementById("output");
+                    output.innerHTML += `<br><br><strong>✅ Number copied to clipboard!</strong>`;
+                });
+            }
+
+            function dialPhone() {
+                window.open(`tel:${YOUR_PHONE_NUMBER.replace(/[\s()-]/g, '')}`, '_blank');
+            }
+
+            function show(type) {
+                currentMode = type;
+                const output = document.getElementById("output");
+                const message = random(messages[type]);
+                
+                output.innerHTML = `<strong>${message}</strong>`;
+                showInput();
+                hideSpotifyInput();
+                
+                // Pulsing button effect
+                document.querySelectorAll('.btn').forEach(btn => btn.classList.remove('active'));
+                event.target.classList.add('active');
+                
+                setTimeout(() => event.target.classList.remove('active'), 2000);
+            }
+
+            function study() {
+                currentMode = 'study';
+                minutes = 25;
+                studyTimerRunning = false;
+                studyPaused = false;
+    
+                const output = document.getElementById("output");
+                output.innerHTML = `
+                    <strong>📚 Study Session Ready! 💪</strong><br><br>
+                    <strong>Before you start:</strong><br>
+                    - Phone on Do Not Disturb<br>
+                    - 🎵 Spotify playlist open<br>
+                    - One tab only<br>
+                    - Deep breaths<br><br>
+        
+                    <div class="timer-display" id="timerDisplay">${formatTime(minutes)}</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+                    </div>
+                    <br>
+                    <button class="btn btn-study-start" id="startStudyBtn" onclick="startStudyTimer()">
+                        🚀 START 25 MIN TIMER
+                    </button>
+                    <br><br>
+                    <em>Need support? Chat below 👇</em>
+                `;
+    
+                showInput();
+                hideSpotifyInput();
+            }
+
+            function startStudyTimer() {
+                if (studyTimerRunning) return;
+    
+                studyTimerRunning = true;
+                studyPaused = false;
+    
+                const startBtn = document.getElementById('startStudyBtn');
+                startBtn.textContent = '⏸️ PAUSE';
+                startBtn.disabled = false;
+                startBtn.className = 'btn btn-study-pause';
+                startBtn.onclick = pauseStudyTimer;
+    
+                timerInterval = setInterval(() => {
+                    if (!studyPaused) {
+                        minutes--;
+                        updateTimerDisplay();
+                    }
+        
+                    if (minutes <= 0 && !studyPaused) {
+                        completeStudySession();
+                    }
+                }, 60000);
+            }
+
+            function pauseStudyTimer() {
+                studyPaused = !studyPaused;
+                const pauseBtn = document.getElementById('startStudyBtn');
+    
+                if (studyPaused) {
+                    pauseBtn.textContent = '▶️ RESUME';
+                    document.getElementById('timerDisplay').classList.add('timer-paused');
+                } else {
+                    pauseBtn.textContent = '⏸️ PAUSE';
+                    document.getElementById('timerDisplay').classList.remove('timer-paused');
+                }
+            }
+
+            function updateTimerDisplay() {
+                document.getElementById('timerDisplay').textContent = formatTime(minutes);
+                const progress = ((25 - minutes) / 25) * 100;
+                document.getElementById('progressFill').style.width = progress + '%';
+            }
+
+            function formatTime(mins) {
+                return `${mins.toString().padStart(2, '0')}:00`;
+            }
+
+            function completeStudySession() {
+                const output = document.getElementById("output");
+                output.innerHTML = `
+                    <strong>🎉 Study session COMPLETE! 🎉</strong><br><br>
+                    You did AMAZING! 🏆<br>
+                    Take a 5-minute break ☕<br><br>
+                    <button class="btn" onclick="study()" style="width: 200px; display: inline-block;">
+                        Another session?
+                    </button>
+                    <br><br>
+                    <em>Need to talk? Call button below 👇</em>
+                `;
+                showInput();
+            }
+
+            function talk() {
+                currentMode = 'talk';
+                const output = document.getElementById("output");
+                output.innerHTML = `
+                    <strong>💬 I'm here to listen</strong><br><br>
+                    What's on your mind today?<br>
+                    No judgment. Just space to breathe.<br>
+                    <em>Or call me if you prefer voice ❤️</em>
+                `;
+                showInput();
+                hideSpotifyInput();
+            }
+
+            function showInput() {
+                document.getElementById('inputBox').style.display = 'block';
+                document.getElementById('sendBtn').style.display = 'block';
+                conversationActive = true;
+                document.getElementById('inputBox').focus();
+            }
+
+            function hideInput() {
+                document.getElementById('inputBox').style.display = 'none';
+                document.getElementById('sendBtn').style.display = 'none';
+                conversationActive = false;
+            }
+
+            function showSpotifyInput() {
+                document.getElementById('spotifyInput').style.display = 'block';
+                document.getElementById('spotifyBtn').style.display = 'block';
+            }
+
+            function hideSpotifyInput() {
+                document.getElementById('spotifyInput').style.display = 'none';
+                document.getElementById('spotifyBtn').style.display = 'none';
+            }
+
+            function sendMessage() {
+                const input = document.getElementById('inputBox');
+                const userMessage = input.value.trim();
+                
+                if (!userMessage) return;
+                
+                const output = document.getElementById("output");
+                output.innerHTML += `<br><br><em><strong>You:</strong> ${userMessage}</em>`;
+                input.value = '';
+                
+                setTimeout(() => respondToUser(userMessage), 800);
+            }
+
+            function respondToUser(userInput) {
+                const output = document.getElementById("output");
+                const lowerInput = userInput.toLowerCase();
+                
+                let response = '';
+                
+                if (lowerInput.includes('yes') || lowerInput.includes('start') || lowerInput.includes('ok')) {
+                    response = "Perfect! Let's do this together! 💪 You've got this.";
+                } else if (lowerInput.includes('stress') || lowerInput.includes('overwhelm')) {
+                    response = "I hear you. That's a lot. Call me if you want to talk it through? 📞";
+                } else if (lowerInput.includes('tired') || lowerInput.includes('exhaust')) {
+                    response = "Rest is productive too. Music or a quick call might help? 🎵📞";
+                } else if (lowerInput.includes('good') || lowerInput.includes('better')) {
+                    response = "Yes! That's the momentum we want! Keep riding that wave! 🌊";
+                } else {
+                    response = "Thank you for sharing. Call anytime if text feels too heavy. ❤️";
+                }
+                
+                output.innerHTML += `<br><strong>Me:</strong> ${response}`;
+                output.scrollTop = output.scrollHeight;
+            }
+
+            function handleKeypress(event) {
+                if (event.key === 'Enter') {
+                    sendMessage();
+                }
+            }
+
+            function handleSpotifyKeypress(event) {
+                if (event.key === 'Enter') {
+                    openSpotify();
+                }
+            }
+
+            // Auto-focus inputs
+            document.getElementById('inputBox').addEventListener('focus', function() {
+                this.parentNode.scrollTop = this.parentNode.scrollHeight;
+            });
+            document.getElementById('spotifyInput').addEventListener('focus', function() {
+                this.parentNode.scrollTop = this.parentNode.scrollHeight;
+            });
+        </script>
+    </body>
+</html>
