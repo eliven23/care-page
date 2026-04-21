@@ -183,6 +183,7 @@
         <button class="btn" onclick="show('motivate')">🔥 Push me</button>
         <button class="btn" onclick="show('funny')">😂 Distract me</button>
         <button class="btn" onclick="study()">📚 Study with me</button>
+        <button class="btn" onclick="thoughtMode()">🧠 Write thoughts</button>
         <button class="btn" onclick="talk()">💬 Talk to me</button>
         
         <button class="btn btn-spotify" onclick="openSpotifyDirect()">
@@ -234,6 +235,8 @@
             const YOUR_PHONE_NUMBER = "+639668917845";  // Replace with your number
             const YOUR_SPOTIFY_PLAYLIST = "https://open.spotify.com/playlist/2SGgfkVoROgMsqMG24E6pp";  // Your playlist
 
+            let chatLogs = JSON.parse(localStorage.getItem('careChatLogs')) || [];
+
             let minutes = 25;
             let timerInterval = null;
             let conversationActive = false;
@@ -241,6 +244,10 @@
             let spotifyLink = '';
             let studyTimerRunning = false;
             let studyPaused = false;
+
+            function saveLogs() {
+                localStorage.setItem('careChatLogs', JSON.stringify(chatLogs));
+            }
 
             function random(arr) {
                 return arr[Math.floor(Math.random() * arr.length)];
@@ -418,13 +425,17 @@
 
             function talk() {
                 currentMode = 'talk';
+
                 const output = document.getElementById("output");
                 output.innerHTML = `
                     <strong>💬 I'm here to listen</strong><br><br>
-                    What's on your mind today?<br>
-                    No judgment. Just space to breathe.<br>
+                    This space saves your thoughts.<br>
+                    You can come back anytime.<br><br>
                     <em>Or call me if you prefer voice ❤️</em>
+                    <hr style="margin:15px 0; border-color:#334155;">
                 `;
+
+                loadChat('talk');
                 showInput();
                 hideSpotifyInput();
             }
@@ -455,22 +466,31 @@
             function sendMessage() {
                 const input = document.getElementById('inputBox');
                 const userMessage = input.value.trim();
-                
+    
                 if (!userMessage) return;
-                
-                const output = document.getElementById("output");
-                output.innerHTML += `<br><br><em><strong>You:</strong> ${userMessage}</em>`;
+
+                const timestamp = new Date().toLocaleString();
+
+                // Save user message
+                chatLogs.push({
+                    role: 'user',
+                    text: userMessage,
+                    mode: currentMode,
+                    time: timestamp
+                });
+
+                renderMessage('You', userMessage);
                 input.value = '';
-                
-                setTimeout(() => respondToUser(userMessage), 800);
+
+                saveLogs();
+
+                setTimeout(() => respondToUser(userMessage), 500);
             }
 
             function respondToUser(userInput) {
-                const output = document.getElementById("output");
                 const lowerInput = userInput.toLowerCase();
-                
                 let response = '';
-                
+
                 if (lowerInput.includes('yes') || lowerInput.includes('start') || lowerInput.includes('ok')) {
                     response = "Perfect! Let's do this together! 💪 You've got this.";
                 } else if (lowerInput.includes('stress') || lowerInput.includes('overwhelm')) {
@@ -482,9 +502,69 @@
                 } else {
                     response = "Thank you for sharing. Call anytime if text feels too heavy. ❤️";
                 }
-                
-                output.innerHTML += `<br><strong>Me:</strong> ${response}`;
+
+                const timestamp = new Date().toLocaleString();
+
+                chatLogs.push({
+                    role: 'bot',
+                    text: response,
+                    mode: currentMode,
+                    time: timestamp
+                });
+
+                renderMessage('Me', response);
+                saveLogs();
+            }
+
+            function renderMessage(sender, text) {
+                const output = document.getElementById("output");
+
+                const bubble = document.createElement('div');
+                bubble.style.marginTop = '10px';
+                bubble.style.textAlign = sender === 'You' ? 'right' : 'left';
+
+                bubble.innerHTML = `
+                    <div style="
+                        display:inline-block;
+                        padding:10px 14px;
+                        border-radius:15px;
+                        max-width:70%;
+                        background:${sender === 'You' ? '#3b82f6' : '#334155'};
+                    ">
+                        <strong>${sender}:</strong> ${text}
+                    </div>
+                `;
+
+                output.appendChild(bubble);
                 output.scrollTop = output.scrollHeight;
+            }
+
+            function loadChat(mode = null) {
+                const output = document.getElementById("output");
+                output.innerHTML = '';
+
+                const filtered = mode 
+                    ? chatLogs.filter(log => log.mode === mode)
+                    : chatLogs;
+
+                filtered.forEach(log => {
+                    renderMessage(log.role === 'user' ? 'You' : 'Me', log.text);
+                });
+            }
+
+            function thoughtMode() {
+                currentMode = 'thought';
+
+                const output = document.getElementById("output");
+                output.innerHTML = `
+                    <strong>🧠 Thought Dump</strong><br><br>
+                    No filter. Just write everything.<br>
+                    This is your private space.<br>
+                    <hr style="margin:15px 0; border-color:#334155;">
+                `;
+
+                loadChat('thought');
+                showInput();
             }
 
             function handleKeypress(event) {
